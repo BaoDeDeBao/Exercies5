@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 
 class CounterViewModel: ViewModel() {
     var likeCount: Int = 0
+    var dislikeCount: Int = 0
 
     init {
         Log.d("ViewModel", "ViewModel created")
@@ -12,6 +13,10 @@ class CounterViewModel: ViewModel() {
 
     fun incrementLike(){
         likeCount++
+    }
+
+    fun decrementLike() {
+        dislikeCount++
     }
 
     override fun onCleared() {

@@ -14,10 +14,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
     //Module-level variable
     //var like: Int = 0
+    //var dislike: Int = 0
+
     lateinit var counterViewModel: CounterViewModel
     lateinit var sharedPreferences : SharedPreferences
 
-    var dislike: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         counterViewModel = ViewModelProviders.of(this).get(CounterViewModel::class.java)
 
         //Initialise the shared preferences
-        sharedPreferences = getSharedPreferences("natukkong", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("natukkong", Context.MODE_PRIVATE) // knowledge only
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
 
         imageViewLike.setOnClickListener {
@@ -37,8 +38,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         imageViewDislike.setOnClickListener {
-            dislike++
-            textViewDislike.text = dislike.toString()
+            counterViewModel.decrementLike()
+            textViewDislike.text = counterViewModel.dislikeCount.toString()
         }
     }
 
@@ -50,21 +51,25 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         Log.d("MainActivity", "onResume")
         val like = sharedPreferences.getInt(getString(R.string.like), 0)
+        val dislike = sharedPreferences.getInt(getString(R.string.dislike), 0)
         counterViewModel.likeCount = like
+        counterViewModel.dislikeCount = dislike
 
         textViewLike.text = counterViewModel.likeCount.toString()
-        textViewDislike.text = dislike.toString()
+        textViewDislike.text = counterViewModel.dislikeCount.toString()
 
         super.onResume()
     }
 
     override fun onPause() {
         Log.d("MainActivity", "onPause")
+
+        //To store the data of like and dislike
         with(sharedPreferences.edit()) {
             putInt(getString(R.string.like), counterViewModel.likeCount)
+            putInt(getString(R.string.dislike), counterViewModel.dislikeCount)
             apply()
         }
-
         super.onPause()
     }
 
